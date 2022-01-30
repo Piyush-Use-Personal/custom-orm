@@ -1,0 +1,18 @@
+{
+  "name": "custom-orm",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "migrate": "./node_modules/.bin/db-migrate up"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "db-migrate": "^0.11.13",
+    "express": "^4.17.1",
+    "pg": "^8.7.1"
+  }
+}
