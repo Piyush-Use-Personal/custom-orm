@@ -3,6 +3,9 @@ const { DatabaseOperations } = require('./index')
 class Project extends DatabaseOperations {
     constructor() {
         super('projects')
+        // this is an example of m-n relationship
+        // please see pages model for one to one relationship
+        // you will need a pivot table to get the relationship
         this.USER = {
             table: 'users',
             pivot: 'users_projects_pivot',
@@ -12,6 +15,8 @@ class Project extends DatabaseOperations {
             key: 'project_id',
             select: ['user_id', 'email', 'data']
         }
+        // this is an example of 1-n relationship
+        // please see above model for many to many relationship
         this.PAGE = {
             table: 'pages',
             pivot: 'projects',
