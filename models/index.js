@@ -1,4 +1,4 @@
-const pool = require("../config");
+const pool = require("../config/db");
 
 class DatabaseOperations {
   constructor(table) {
@@ -109,12 +109,9 @@ const QueryBuilder = {
       // If there is a condition object build query using keys and values
       if (where) {
         const conditionKeys = Object.keys(where);
-        const conditionValues = Object.values(where).map((value) => 
-          (typeof value === 'string' ? `'${value}'` : value)
-        );
+        const conditionValues = Object.values(where).map((value) => (typeof value === 'string' ? `'${value}'` : value));
         conditionKeys.forEach((key, index) => {
-          conditions += `${key} = ${conditionValues[index]}
-          ${index === conditionKeys.length - 1 ? '' : ' AND '}`;
+          conditions += `${key} = ${conditionValues[index]}${index === conditionKeys.length - 1 ? '' : ' AND '}`;
         });
       }
 
@@ -122,6 +119,37 @@ const QueryBuilder = {
       if (conditions) query += ` WHERE ${conditions}`;
       return query;
     },
+    innerJoin: (name, pivot, pk, fk, fk_pivot, id, select = []) => {
+
+      const selection = select.length ? select.map(s => `s.${s}`).join(',') : '*'
+
+      return `SELECT ${selection}
+      FROM ${pivot} sc 
+      INNER JOIN ${name} s ON s.${fk} = sc.${fk_pivot}
+      WHERE sc.${pk} = ${id}`
+    },
+    update: (name, data, where) => {
+      let conditions = '';
+      let updater = '';
+
+      // If there is a condition object build query using keys and values
+      if (where) {
+        const conditionKeys = Object.keys(where);
+        const conditionValues = Object.values(where).map((value) => (typeof value === 'string' ? `'${value}'` : value));
+        conditionKeys.forEach((key, index) => {
+          conditions += `${key} = ${conditionValues[index]}${index === conditionKeys.length - 1 ? '' : ' AND '}`;
+        });
+      }
+      if (data) {
+        const dataKey = Object.keys(data);
+        dataKey.forEach((key, index) => {
+          updater += `${key} = $${index + 1}`;
+        });
+      }
+      let query = `UPDATE ${name} SET ${updater} `;
+      if (conditions) query += ` WHERE ${conditions}`;
+      return query;
+    }
   }
 }
 module.exports = {
